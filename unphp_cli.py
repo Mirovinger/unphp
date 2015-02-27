@@ -100,7 +100,7 @@ class readapi :
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-k', help='Set the unphp.net API key', dest='api')
-parser.add_argument('-s', help='Get API key from saved a .key file', dest='saved')
+parser.add_argument('-s', help='Get API key from saved a .key file', action='store_true')
 parser.add_argument('-v', '--verbose', help='Increase output verbosity', action='store_true')
 parser.add_argument('-f', help='Set file to decrypt', dest='file')
 parser.add_argument('-d', help='Set directory to decrypt', dest='directory')
@@ -110,15 +110,15 @@ if len(argv) == 1 :
   print parser.print_help()
 
 else :
-  if args.file and (args.api or (args.saved and readapi().exist())) :
-    one(args.api, args.file)
-  elif args.directory and (args.api or (args.saved and readapi().exist()))  :
+  if args.file and (args.api or (args.s and readapi().exist())) :
+    one(args.api or readapi().readkey(), args.file)
+  elif args.directory and (args.api or (args.s and readapi().exist()))  :
     import glob
     from os.path import join
     # Get only PHP non decrypted files from directory
     files =  [ f for f in glob.glob(join(args.directory, '*.php')) if '_dec' not in f ]
     for file1 in files :
-      one(args.api, file1)
+      one(args.api or readapi().readkey(), file1)
 
   else :
     print 'Please provide an API key and a PHP file or a directory'
